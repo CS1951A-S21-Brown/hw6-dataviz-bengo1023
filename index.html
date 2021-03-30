@@ -4,9 +4,31 @@
         <meta charset="utf-8">
         <title>Assignment 6 &laquo; Data Visualization Dashboard&raquo;</title>
         <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/css/bootstrap-slider.min.css">
         <link rel="stylesheet" href="main.css"/>
         <!--Feel free to add more CSS files as needed-->
         <script type="text/javascript" src="https://d3js.org/d3.v5.min.js"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-slider/10.6.2/bootstrap-slider.min.js"></script>
+        <style type="text/css">
+            /* Custom style rules go here. We've included a few, but feel free to write your own! */
+            button:focus {
+                outline: 0 !important;
+            }
+            svg {
+                display: block;
+                margin: 0 auto;
+                font: 10px sans-serif;
+            }
+            .tooltip {
+                position: absolute;
+                font-size: 12px;
+                min-width: 100px;
+                padding: 10px;
+                width:  auto;
+                height: auto;
+            }
+        </style>
     </head>
 <body>
     <div class="header">
@@ -15,14 +37,120 @@
     <!--  We included a basic HTML structure for the 3 graphs here. Feel free to change this if you'd like  -->
     <div class="row">
         <div class="col-lg-6">
+            <button style='margin-left:16px; margin-right:16px;' type="button" class="btn btn-info" onclick="g1_setData(0, '')">All Netflix</button>
+            <button style='margin-right:16px' type="button" class="btn btn-info" onclick="g1_setData(1, 'Movie')">Movies</button>
+            <button type="button" class="btn btn-info" onclick="g1_setData(2, 'TV Show')">TV Shows</button>
             <div id="graph1"></div>
+            <div class="center">
+                <label id="yearSlider" for="year" style='margin-left:16px; margin-right:16px;'>Set Year Range</label>
+                <input id="year_range" type="text" class="span2"
+                    data-slider-min="1942" data-slider-max="2020" data-slider-step="1"
+                    data-slider-value="[1942,2020]"/>
+            </div>
             <div id="graph2"></div><br/>
+            <p style="font-size: 10px; margin-left: 16px;">The horizontal blue, purple, and red lines illustrate the 1st quartile, median, and 3rd quartile, respectively, of the average runtimes of movies in the selected yearly range. (top - 3rd quartile, middle - median, bottom - 1st quartile)</p>
         </div>
         <div class="col-lg-6">
             <div id="graph3"></div>
+            <div id="tooltip"></div>
+            <p style="font-size: 10px; text-align: center; ">Two actors collaborated if they both appeared within the cast of a Movie or TV Show. Edges of the graph represent collaborations. Hover over each node in the graph to see the actor it represents.</p>
         </div>
     </div>
+    <br><hr><br>
+    <div style="margin-left: 32px; margin-right: 16px;" id="questions">
+    <p><strong>Questions</strong> <br>
+    </p>
+    <ol>
+        <li>
+            Your boss wants to know the number of titles per genre on Netflix.
+        </li>
+        <li>
+            Your boss wants to understand the average runtime of movies by release year.
+        </li>
+        <li>
+            Lastly, we want to learn about the cast and directors. You have two choices here: 1) the top director + actor pairs by number of movies made 2) a flow chart where each actor is a node, and a link refers to a movie they both acted in (just the connection, no need to specify number of movies made together or which movies those are)
+        </li>
+
+    </ol>
+    </div>
+    <br><hr><br>
+    <div style="margin-left: 32px; margin-right: 16px;" id="written-questions">
+        <h2>Written Questions</h2>
+        <h4>32 points</h4>
+        <p>
+            Write answers to the following questions below your dashboard in <code>index.html</code>:
+        </p>
+        <ol>
+            <li>Describe how your dashboard answers the questions presented. You don't have to address
+            every question directly, but should at a high level address the main questions. (10 points)</li>
+            <p> <br>
+                Graph 1 illustrates the number of titles in the top 10 genres on Netlix. These are likely the most important genre counts to see but more genres can be viewed by adjusting NUM_EXAMPLES and the buttons allow for viewing of separate movie and tv show genre counts. 
+                <br><br>
+
+                Graph 2 illustrates the average runtime of movies on Netflix released within a specified year range. This will allow my boss to examine trends and outliers in the average runtime data. The quartile lines will be even more helpful in understanding the distribution of average runtimes in the specified yearly range. <br><br>
+
+                Graph 3 illustrates collaborations between Actors in Indian Independent movies released between 2018 and 2020 through a flow chart of type network where edges are collaborations. This graph will allow my boss to visualize the relationships and connections between actors in that area of the film industry.
+            </p>
+            <li>List 3 reasons why D3 was helpful and improved your visualization (6 points)</li>
+            <ol>
+                <li>
+                    D3 automatically scaled charts to the given sizes.
+                </li>
+                <li>
+                    D3's color interpolation made my charts visually appealing
+                </li>
+                <li>
+                    D3 provides seamless transitions as my data parameters are adjusted
+                </li>
+            </ol>
+            <li>List 3 reasons why D3 would <strong>not</strong> be the best tool for creating a visualization (6 points)</li>
+            <ol>
+                <li>
+                    D3 has a heavy learning curve as its methods and format is not very natural or understandable at first (or second) glance.
+                </li>
+                <li>
+                    I could have created a great deal of the data visualization in excel or numbers. Perhaps not as well formatted and colored, but much faster.
+                </li>
+                <li>
+                    The size of the D3.js file is 248 KB on my computer, it may be worth it to write more code not using D3 to display the same data if overall the amount of code that the browser needs to deal with is less.
+                </li>
+            </ol>
+            <p></p>
+
+            <h3>Accessible Data Visualization (10 points)</h3>
+            <li>
+                Evaluate the accessibility of your dashboard based on the readings in the “Before you begin” section. What kinds of users might find this dashboard accessible and who might have more difficulty? What additional actions might you take to make this dashboard more accessible to all audiences? Your response should refer to at least one of the readings and be about 1 paragraph.
+            </li>
+            <p>
+                The accesible features of my dashboard include: padding/gaps between bars for greater contrast, a color blind friendly pallette of red and blue, color not being a vital element of understanding the visualized data, labeled axes and counts on graph 1, as well as the use of svg format, which is read by screen readers more easily. The faults of my dashboard in terms of accessibility include: using a slider interactive element rather than a dropdown menu, the lack of count or quartile values displayed on graph 2, the use of only tooltip hover overlays to present node data for graph 3. Many of these pros and cons including accesible pallettes, choice of slider elements all came from Amanda Miller's Comprehensive Guide to Accessible Data Visualization. In my opinion, my graph succeeds in presenting data to a color blind audience, but blind and visually impaired users of my visualization might struggle to understand it. In the future I might add alternate text captions to my visualization and try adding counts to graph 2 or more text data to graph 3.
+            </p>
+            <li>
+                Reflect on the stages of your design and implementation process when you could have taken steps to make your dashboard more accessible to all audiences. What are some factors that kept you from taking these steps? (a few sentences)
+            </li>
+            <p>
+                Mostly I failed in terms of implementing my graphs with accesibile features because I was focused on learning d3 and svg objects. I should have outlined the feaures explained in Amanda Miller's guide that my graphs needed so I could focus on implementing them more throughout the whole process of this project rather than at the end when I examined the style of my graph. I also just did not have much experience in terms of data visualization which could have helped me know more about accesible data representation.
+            </p>
+        </ol>
+        <h4>EXTRA CREDIT</h4>
+        <p>
+            You implement some form of dynamic stats calculation. By dynamic, we mean that it updates depending on which data is being shown. Our example dashboard calculates a regression line, but you can show box plot whiskers, calculate percentiles, calculate a t-test. 
+
+            <br><br>
+
+            If you choose to add this, please add a note below your dashboard and written answers which in 1-3 sentences explains what you did and why it's statistical. (10 points) 
+
+            <br> <br> 
+
+            <strong> NOTE </strong>
+            The lines on Graph 2 are dynamically calculated, they illustrate the first quartile, median, and third quartile of the average runtimes in the specified year range. This is statisticial because it provides insight into the distribution of the average run times in the specified year range.
+
+            <br><br><br><hr><br>
+        </p>
+    </div>
     <!--Feel free to add more JavaScript files as needed-->
+    <script type="text/javascript">
+        const NUM_EXAMPLES = 10;
+    </script>
     <script type="text/javascript" src="main.js"></script>
 </body>
 </html>
