@@ -3,7 +3,7 @@ const MAX_WIDTH = Math.max(1080, window.innerWidth);
 const MAX_HEIGHT = 720;
 const margin = {top: 40, right: 100, bottom: 40, left: 175};
 
-let g1_filenames = ["../data/netflix.csv", "../data/movies.csv", "../data/tv.csv"];
+let g1_filenames = ["./data/netflix.csv", "./data/movies.csv", "./data/tv.csv"];
 
 // Assumes the same graph width, height dimensions as the example dashboard. Feel free to change these if you'd like
 let graph_1_width = (MAX_WIDTH / 2) - 10, graph_1_height = 250;
@@ -183,7 +183,7 @@ let g2_title = svg2.append("text")
     .style("font-size", 15);
 
 function g2_setData(y1,y2) {
-	d3.csv("../data/movies.csv").then(function(data) {
+	d3.csv("./data/movies.csv").then(function(data) {
     data = g2_getData(data, y1, y2);
 		//console.log(data);
 
@@ -347,7 +347,7 @@ function netdata() {
 */
 
 function network(type, place, genre, y1,y2) {
-  d3.csv("../data/movies.csv").then(function(data) {
+  d3.csv("./data/movies.csv").then(function(data) {
     let years = data.filter(function(d) {return (d["type"] == type)})
       .filter(function(d) {return (d["country"] == place)})
       .filter(function(d) {return (d["listed_in"].split(", ").includes(genre))})
